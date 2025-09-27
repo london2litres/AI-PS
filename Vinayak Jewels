@@ -1,0 +1,171 @@
+import React, { useState, useEffect } from 'react';
+import { Calculator, Gem } from 'lucide-react';
+
+export default function VinayakJewelleryCalculator() {
+  const [spotPrice, setSpotPrice] = useState('');
+  const [materialType, setMaterialType] = useState('24KT');
+  const [weight, setWeight] = useState('');
+  const [makingCharges, setMakingCharges] = useState('');
+  const [deductions, setDeductions] = useState('');
+  const [finalPrice, setFinalPrice] = useState(0);
+
+
+
+  useEffect(() => {
+    calculatePrice();
+  }, [spotPrice, materialType, weight, makingCharges, deductions]);
+
+  const calculatePrice = () => {
+    const spot = parseFloat(spotPrice) || 0;
+    const wgt = parseFloat(weight) || 0;
+    const making = parseFloat(makingCharges) || 0;
+    const deduct = parseFloat(deductions) || 0;
+    if (spot > 0 && wgt > 0) {
+      const baseValue = spot * wgt;
+      const makingChargesAmount = baseValue * (making / 100);
+      const total = baseValue + makingChargesAmount - deduct;
+      setFinalPrice(Math.max(0, total));
+    } else {
+      setFinalPrice(0);
+    }
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 p-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Gem className="w-8 h-8 text-yellow-600" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+              Vinayak Jewels App
+            </h1>
+            <Gem className="w-8 h-8 text-yellow-600" />
+          </div>
+          <p className="text-xl text-amber-700 font-medium">Premium Calculator</p>
+        </div>
+
+        {/* Calculator Card */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-yellow-200 overflow-hidden">
+          <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 p-6">
+            <div className="flex items-center justify-center gap-2 text-white">
+              <Calculator className="w-6 h-6" />
+              <h2 className="text-2xl font-bold">Jewelry Calculator</h2>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6">
+            {/* Spot Price */}
+            <div className="space-y-2">
+              <label className="block text-lg font-semibold text-amber-800">
+                Spot Price (₹ per gram)
+              </label>
+              <input
+                type="number"
+                value={spotPrice}
+                onChange={(e) => setSpotPrice(e.target.value)}
+                placeholder="Enter current spot price"
+                className="w-full p-4 border-2 border-yellow-200 rounded-xl focus:border-yellow-400 focus:outline-none text-lg bg-yellow-50/50"
+              />
+            </div>
+
+            {/* Material Type */}
+            <div className="space-y-2">
+              <label className="block text-lg font-semibold text-amber-800">
+                Material Type
+              </label>
+              <select
+                value={materialType}
+                onChange={(e) => setMaterialType(e.target.value)}
+                className="w-full p-4 border-2 border-yellow-200 rounded-xl focus:border-yellow-400 focus:outline-none text-lg bg-yellow-50/50"
+              >
+                <option value="24KT">24KT Gold</option>
+                <option value="22KT">22KT Gold</option>
+                <option value="18KT">18KT Gold</option>
+                <option value="14KT">14KT Gold</option>
+                <option value="SILVER">Silver</option>
+              </select>
+            </div>
+
+            {/* Weight */}
+            <div className="space-y-2">
+              <label className="block text-lg font-semibold text-amber-800">
+                Weight (grams)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                placeholder="Enter weight in grams"
+                className="w-full p-4 border-2 border-yellow-200 rounded-xl focus:border-yellow-400 focus:outline-none text-lg bg-yellow-50/50"
+              />
+            </div>
+
+            {/* Making Charges */}
+            <div className="space-y-2">
+              <label className="block text-lg font-semibold text-amber-800">
+                Making Charges (%)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={makingCharges}
+                onChange={(e) => setMakingCharges(e.target.value)}
+                placeholder="Enter making charges percentage"
+                className="w-full p-4 border-2 border-yellow-200 rounded-xl focus:border-yellow-400 focus:outline-none text-lg bg-yellow-50/50"
+              />
+            </div>
+
+            {/* Deductions */}
+            <div className="space-y-2">
+              <label className="block text-lg font-semibold text-amber-800">
+                Deductions (Wastage/Stones) ₹
+              </label>
+              <input
+                type="number"
+                value={deductions}
+                onChange={(e) => setDeductions(e.target.value)}
+                placeholder="Enter any deductions"
+                className="w-full p-4 border-2 border-yellow-200 rounded-xl focus:border-yellow-400 focus:outline-none text-lg bg-yellow-50/50"
+              />
+            </div>
+
+            {/* Final Price Display */}
+            <div className="mt-8 p-6 bg-gradient-to-r from-yellow-100 to-amber-100 rounded-2xl border-2 border-yellow-300">
+              <div className="text-center space-y-3">
+                <h3 className="text-2xl font-bold text-amber-800">Final Price</h3>
+                <div className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
+                  {formatCurrency(finalPrice)}
+                </div>
+                <div className="mt-4 p-4 bg-white/70 rounded-xl border border-yellow-200">
+                  <p className="text-lg text-amber-700 font-medium italic">
+                    "Thank you!" ✨
+                  </p>
+                  <p className="text-sm text-amber-600 mt-2">
+                    Crafted with precision, chosen with love
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-amber-600 font-medium">
+            Pure Value • Pure Gold • Pure Trust
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
